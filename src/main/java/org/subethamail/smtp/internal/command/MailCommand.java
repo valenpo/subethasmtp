@@ -53,6 +53,7 @@ public final class MailCommand extends BaseCommand
 			return;
 		}
 
+		//TODO add way to accept all addresses without check
 		String emailAddress = EmailUtils.extractEmailAddress(args, 5);
 		if (!EmailUtils.isValidEmailAddress(emailAddress))
 		{
