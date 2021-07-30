@@ -4,8 +4,6 @@ import com.github.davidmoten.guavamini.Preconditions;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 
-import java.util.Arrays;
-
 /**
  * @author Jeff Schnitzer
  */

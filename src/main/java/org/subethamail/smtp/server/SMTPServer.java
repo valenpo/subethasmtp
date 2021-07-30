@@ -530,7 +530,7 @@ public final class SMTPServer implements SSLSocketCreator {
         }
 
         public Builder serverSocketFactory(SSLServerSocketFactory factory) {
-            return serverSocketFactory(() -> factory.createServerSocket());
+            return serverSocketFactory(factory::createServerSocket);
         }
 
         public Builder serverSocketFactory(SSLContext context) {
@@ -677,7 +677,7 @@ public final class SMTPServer implements SSLSocketCreator {
         return s;
     };
 
-    private static final ServerSocketCreator SERVER_SOCKET_CREATOR_DEFAULT = () -> new ServerSocket();
+    private static final ServerSocketCreator SERVER_SOCKET_CREATOR_DEFAULT = ServerSocket::new;
 
     private static final MessageHandlerFactory MESSAGE_HANDLER_FACTORY_DEFAULT = new BasicMessageHandlerFactory(
             (context, from, to, data) -> log.info("From: " + from + ", To: " + to + "\n"
@@ -811,7 +811,7 @@ public final class SMTPServer implements SSLSocketCreator {
      *             when creating the socket failed
      */
     @Override
-    public final SSLSocket createSSLSocket(Socket socket) throws IOException {
+    public SSLSocket createSSLSocket(Socket socket) throws IOException {
         return startTlsSocketCreator.createSSLSocket(socket);
     }
 
