@@ -1,5 +1,5 @@
 # subethasmtp
-<a href="https://travis-ci.org/davidmoten/subethasmtp"><img src="https://travis-ci.org/davidmoten/subethasmtp.svg"/></a><br/>
+<a href="https://github.com/davidmoten/subethasmtp/actions/workflows/ci.yml"><img src="https://github.com/davidmoten/subethasmtp/actions/workflows/ci.yml/badge.svg"/></a><br/>
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.davidmoten/subethasmtp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/com.github.davidmoten/subethasmtp)<br/>
 [![codecov](https://codecov.io/gh/davidmoten/subethasmtp/branch/master/graph/badge.svg)](https://codecov.io/gh/davidmoten/subethasmtp)<br/>
 
@@ -17,7 +17,7 @@ This component can be used in almost any kind of email  processing application. 
   * [Mireka](http://code.google.com/p/mireka/) - Mail server and SMTP proxy with detailed logging, statistics and built-in, fail-fast filters
   
 ## Features
-* Supports minimum SMTP specification described in [rfc2821](https://www.ietf.org/rfc/rfc2821.txt) (4.5.1)
+* Supports minimum SMTP specification described in [rfc2821](https://tools.ietf.org/html/rfc2821#section-4.5.1) (4.5.1)
 * Supports STARTTLS 
 * Supports SMTP AUTH
 * Supports SMTP over SSL/TLS (via specification of server socket factories)
