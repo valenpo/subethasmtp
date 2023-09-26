@@ -99,6 +99,29 @@ public class BdatTest {
     }
 
     @Test
+    public void testBdatAfterBdatLast() throws IOException {
+        MyListener listener = new MyListener();
+        SMTPServer server = SMTPServer.port(25000).messageHandler(listener).build();
+        try {
+            server.start();
+            SmartClient client = SmartClient.createAndConnect("localhost", 25000, "clientHeloHost");
+            assertTrue(client.getExtensions().containsKey("CHUNKING"));
+            client.from("me@oz.com");
+            client.to("dave@oz.com");
+            client.bdatLast("hello");
+
+            try {
+                client.bdat("hello");
+            } catch (SMTPException e) {
+                assertEquals("503 5.5.1 Error: need MAIL command",
+                        e.getMessage());
+            }
+        } finally {
+            server.stop();
+        }
+    }
+
+    @Test
     @Ignore
     public void testTwoMailsWithBdatInSameSession()
             throws UnknownHostException, SMTPException, IOException, InterruptedException {
