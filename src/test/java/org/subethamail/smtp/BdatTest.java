@@ -122,6 +122,27 @@ public class BdatTest {
     }
 
     @Test
+    public void testEmptyBdat() throws IOException {
+        MyListener listener = new MyListener();
+        SMTPServer server = SMTPServer.port(25000).messageHandler(listener).build();
+        try {
+            server.start();
+            SmartClient client = SmartClient.createAndConnect("localhost", 25000, "clientHeloHost");
+            assertTrue(client.getExtensions().containsKey("CHUNKING"));
+            client.from("me@oz.com");
+            client.to("dave@oz.com");
+            try {
+                client.bdat("");
+            } catch (SMTPException e) {
+                assertEquals("551 5.7.1 Error: Null BDAT request",
+                        e.getMessage());
+            }
+        } finally {
+            server.stop();
+        }
+    }
+
+    @Test
     @Ignore
     public void testTwoMailsWithBdatInSameSession()
             throws UnknownHostException, SMTPException, IOException, InterruptedException {
