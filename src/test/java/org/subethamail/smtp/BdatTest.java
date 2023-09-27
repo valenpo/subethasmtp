@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.subethamail.smtp.client.SMTPException;
@@ -133,6 +134,7 @@ public class BdatTest {
             client.to("dave@oz.com");
             try {
                 client.bdat("");
+                Assert.fail();
             } catch (SMTPException e) {
                 assertEquals("551 5.7.1 Error: Null BDAT request",
                         e.getMessage());
