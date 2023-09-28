@@ -113,6 +113,7 @@ public class BdatTest {
 
             try {
                 client.bdat("hello");
+                Assert.fail();
             } catch (SMTPException e) {
                 assertEquals("503 5.5.1 Error: need MAIL command",
                         e.getMessage());
