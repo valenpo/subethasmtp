@@ -21,7 +21,7 @@ import org.subethamail.smtp.server.Session;
  * @author Jeff Schnitzer
  */
 public final class DataCommand extends BaseCommand {
-    private final static int BUFFER_SIZE = 1024 * 32; // 32k seems reasonable
+    public final static int BUFFER_SIZE = 1024 * 32; // 32k seems reasonable
 
     public DataCommand() {
         super("DATA", "Following text is collected as the message.\n"
