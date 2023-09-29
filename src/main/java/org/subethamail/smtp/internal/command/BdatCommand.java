@@ -1,6 +1,5 @@
 package org.subethamail.smtp.internal.command;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -10,8 +9,6 @@ import org.subethamail.smtp.internal.io.BdatInputStream;
 import org.subethamail.smtp.internal.server.BaseCommand;
 import org.subethamail.smtp.internal.util.SMTPResponseHelper;
 import org.subethamail.smtp.server.Session;
-
-import static org.subethamail.smtp.internal.command.DataCommand.BUFFER_SIZE;
 
 /**
  * @author David Moten
@@ -39,7 +36,7 @@ public final class BdatCommand extends BaseCommand {
             return;
         }
 
-        InputStream stream = new BdatInputStream(new BufferedInputStream(sess.getRawInput(), BUFFER_SIZE), sess, bdat.size, bdat.isLast);
+        InputStream stream = new BdatInputStream(sess.getRawInput(), sess, bdat.size, bdat.isLast);
 
         String dataMessage = null;
         try {
