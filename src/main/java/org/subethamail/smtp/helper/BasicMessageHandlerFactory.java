@@ -56,7 +56,7 @@ public class BasicMessageHandlerFactory implements MessageHandlerFactory {
         @Override
         public String data(InputStream is) throws RejectException, TooMuchDataException, IOException {
             try {
-                byte[] bytes = readAndClose(is, maxMessageSize);
+                byte[] bytes = convert(is, maxMessageSize);
 
                 // must call listener here because if called from done() then
                 // a 250 ok response has already been sent
@@ -74,22 +74,27 @@ public class BasicMessageHandlerFactory implements MessageHandlerFactory {
             }
         }
 
-        private static byte[] readAndClose(InputStream is, int maxMessageSize)
+        /**
+         *
+         * @param is will be converted to array
+         * @param maxMessageSize to check
+         * @return
+         * @throws IOException
+         * @throws TooMuchDataException if
+         */
+        private static byte[] convert(InputStream is, int maxMessageSize)
                 throws IOException, TooMuchDataException {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             byte[] buffer = new byte[8192];
             int n;
-            try {
-                while ((n = is.read(buffer)) != -1) {
-                    bytes.write(buffer, 0, n);
-                    if (maxMessageSize > 0 && bytes.size() > maxMessageSize) {
-                        throw new TooMuchDataException("message size exceeded maximum of " + maxMessageSize + "bytes");
-                    }
+
+            while ((n = is.read(buffer)) != -1) {
+                bytes.write(buffer, 0, n);
+                if (maxMessageSize > 0 && bytes.size() > maxMessageSize) {
+                    throw new TooMuchDataException("message size exceeded maximum of " + maxMessageSize + "bytes");
                 }
-            } finally {
-                // TODO creator of stream should close it, not this method
-                is.close();
             }
+
             return bytes.toByteArray();
         }
 
