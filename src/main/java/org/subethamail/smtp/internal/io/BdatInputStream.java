@@ -66,8 +66,4 @@ public final class BdatInputStream extends InputStream {
         }
     }
 
-    @Override
-    public void close() throws IOException {
-        in.close();
-    }
 }
