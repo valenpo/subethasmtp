@@ -75,12 +75,12 @@ public class BasicMessageHandlerFactory implements MessageHandlerFactory {
         }
 
         /**
-         * Convert provided InputStream to byte array and check that InputStream is not more than maxMessageSize
+         *
          * @param is will be converted to array
-         * @param maxMessageSize limit of message
-         * @return converted InputStream to byte array
+         * @param maxMessageSize to check
+         * @return
          * @throws IOException
-         * @throws TooMuchDataException if the data size is greater than the limit
+         * @throws TooMuchDataException if
          */
         private static byte[] convert(InputStream is, int maxMessageSize)
                 throws IOException, TooMuchDataException {
