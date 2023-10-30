@@ -56,7 +56,7 @@ public class BasicMessageHandlerFactory implements MessageHandlerFactory {
         @Override
         public String data(InputStream is) throws RejectException, TooMuchDataException, IOException {
             try {
-                byte[] bytes = convert(is, maxMessageSize);
+                byte[] bytes = read(is, maxMessageSize);
 
                 // must call listener here because if called from done() then
                 // a 250 ok response has already been sent
@@ -82,7 +82,7 @@ public class BasicMessageHandlerFactory implements MessageHandlerFactory {
          * @throws IOException
          * @throws TooMuchDataException if the data size is greater than the limit
          */
-        private static byte[] convert(InputStream is, int maxMessageSize)
+        private static byte[] read(InputStream is, int maxMessageSize)
                 throws IOException, TooMuchDataException {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             byte[] buffer = new byte[8192];
