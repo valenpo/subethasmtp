@@ -1,6 +1,6 @@
 package org.subethamail.smtp.server;
 
-import java.io.FilterInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,6 +24,7 @@ import org.subethamail.smtp.DropConnectionException;
 import org.subethamail.smtp.MessageContext;
 import org.subethamail.smtp.MessageHandler;
 import org.subethamail.smtp.internal.io.CRLFTerminatedReader;
+import org.subethamail.smtp.internal.io.Utf8InputStreamReader;
 import org.subethamail.smtp.internal.proxy.ProxyHandler;
 import org.subethamail.smtp.internal.proxy.ProxyHandler.ProxyResult;
 import org.subethamail.smtp.internal.server.ServerThread;
@@ -37,6 +38,8 @@ import org.subethamail.smtp.server.SessionHandler.SessionAcceptance;
  * @author Jeff Schnitzer
  */
 public final class Session implements Runnable, MessageContext {
+    private static final int BUFFER_SIZE = 8192;
+
     private final static Logger log = LoggerFactory.getLogger(Session.class);
 
     /** A link to our parent server */
@@ -66,7 +69,7 @@ public final class Session implements Runnable, MessageContext {
 
     /** I/O to the client */
     private Socket socket;
-    private NonClosableInputStream input;
+    private InputStream input;
     private CRLFTerminatedReader reader;
     private OutputStream output;
     private PrintWriter writer;
@@ -283,6 +286,13 @@ public final class Session implements Runnable, MessageContext {
 
                     // if people are screwing with things, close connection
                     return;
+                } catch (Utf8InputStreamReader.InvalidUTF8EncodingException ee) {
+                    String msg = "501 Syntax error: invalid character encoding.";
+
+                    log.debug(msg, ee);
+                    this.sendResponse(msg);
+
+                    return;
                 }
             }
         } finally {
@@ -298,7 +308,7 @@ public final class Session implements Runnable, MessageContext {
         try {
             try {
                 this.writer.close();
-                this.input.closeActually();
+                this.input.close();
             } finally {
                 this.closeSocket();
             }
@@ -314,7 +324,7 @@ public final class Session implements Runnable, MessageContext {
      */
     public void setSocket(Socket socket) throws IOException {
         this.socket = socket;
-        this.input = new NonClosableInputStream(this.socket.getInputStream());
+        this.input = new BufferedInputStream(this.socket.getInputStream(), BUFFER_SIZE);
         this.reader = new CRLFTerminatedReader(this.input);
         this.output = this.socket.getOutputStream();
         this.writer = new PrintWriter(this.output);
@@ -551,41 +561,5 @@ public final class Session implements Runnable, MessageContext {
     @Override
     public Certificate[] getTlsPeerCertificates() {
         return tlsPeerCertificates;
-    }
-
-    /**
-     * An InputStream class that on {@link #close()} call will not close underlying stream.
-     * To actually close underlying stream, call the method {@link #closeActually()}
-     */
-    private static final class NonClosableInputStream extends FilterInputStream {
-
-        private final InputStream decorated;
-
-        /**
-         * Creates a <code>FilterInputStream</code>
-         * by assigning the  argument <code>decorated</code>
-         * to the field <code>this.decorated</code> so as
-         * to remember it for later use.
-         *
-         * @param decorated the underlying input stream, or <code>null</code> if
-         *           this instance is to be created without an underlying stream.
-         */
-        protected NonClosableInputStream(InputStream decorated) {
-            super(decorated);
-            this.decorated = decorated;
-        }
-
-        @Override
-        public void close() {
-
-        }
-
-        /**
-         * Close stream, actually.
-         * @throws IOException
-         */
-        public void closeActually() throws IOException {
-            this.decorated.close();
-        }
     }
 }
